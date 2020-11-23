@@ -10,8 +10,7 @@
    }
 
    /* Quitar elementos de navegación cuando hay solamente 1 slide*/
-   {% i
-   f section.blocks.size == 1 %}
+   {% if section.blocks.size == 1 %}
       .swiper-button-next, .swiper-button-prev, .swiper-pagination {
          display: none;
       }
@@ -23,7 +22,6 @@
    }
 
    .swiper__content {
-      padding: 4rem;
       padding: 5rem 2rem;
    }
 
