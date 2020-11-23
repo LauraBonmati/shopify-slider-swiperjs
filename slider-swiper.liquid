@@ -1,0 +1,636 @@
+<style>
+   /* Configuración del estilo base de swiperjs */
+   :root {
+      {% if section.settings.color_animation %}
+         --swiper-theme-color: {{ section.settings.color_animation }};
+      {% else %}
+         --swiper-theme-color: {{ settings.color_primary }};
+      {% endif %}
+      --swiper-navigation-size: 25px;
+   }
+
+   /* Quitar elementos de navegación cuando hay solamente 1 slide*/
+   {% i
+   f section.blocks.size == 1 %}
+      .swiper-button-next, .swiper-button-prev, .swiper-pagination {
+         display: none;
+      }
+   {% endif %}
+
+   /* TODO: Adaptaciones específicas para el tema Narrative */
+   .feature-row__heading::before {
+      display: none;
+   }
+
+   .swiper__content {
+      padding: 4rem;
+      padding: 5rem 2rem;
+   }
+
+   /* CSS específico para el slider */
+   .swiper-background {
+      width: 100%;
+      height: 100%;
+      background: url({{ '@gohsantosa2.jpg' | asset_url }}); /* Imagen de background que se encuentra en la carpeta assets */
+      background-size: 50% 50%;
+      background-size: contain;
+   }
+
+   .swiper-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+   }
+
+   .overlay {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: black;
+      opacity: 0.3;
+   }
+
+   .swiper__wrapper-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+   }
+
+   .swiper__content {
+      position: relative;
+   }
+
+   .justify-start {
+      justify-content: flex-start;
+   }
+
+   .justify-end {
+      justify-content: flex-end;
+   }
+
+   .justify-center {
+      justify-content: center;
+   }
+
+   .items-center {
+      align-items: center;
+   }
+
+   .items-start {
+      align-items: flex-start;
+   } 
+   
+   .items-end {
+      align-items: flex-end;
+   } 
+   
+   .sm-text-center {
+      text-align: center;
+   }
+
+   .sm-text-left {
+      text-align: left;
+   }
+
+   .sm-text-right {
+      text-align: right;
+   }
+
+   @media (min-width: 768px) {
+      .md-justify-start {
+         justify-content: flex-start;
+      }
+
+      .md-justify-end {
+         justify-content: flex-end;
+      }
+
+      .md-justify-center {
+         justify-content: center;
+      }
+
+      .md-items-center {
+         align-items: center;
+      }
+
+      .md-items-start {
+         align-items: flex-start;
+      }
+      
+      .md-items-end {
+         align-items: flex-end;
+      }
+      
+      .md-text-center {
+         text-align: center;
+      }
+
+      .md-text-left {
+         text-align: left;
+      }
+
+      .md-text-right {
+         text-align: right;
+      }
+   }
+
+   @media (min-width: 1024px) {
+      .lg-justify-start {
+         justify-content: flex-start;
+      }
+
+      .lg-justify-end {
+         justify-content: flex-end;
+      }
+
+      .lg-justify-center {
+         justify-content: center;
+      }
+
+      .lg-items-center {
+         align-items: center;
+      }
+
+      .lg-items-start {
+         align-items: flex-start;
+      }
+      
+      .lg-items-end {
+         align-items: flex-end;
+      }
+      
+      .lg-text-center {
+         text-align: center;
+      }
+
+      .lg-text-left {
+         text-align: left;
+      }
+
+      .lg-text-right {
+         text-align: right;
+      }
+   }
+</style>
+
+<div class="swiper-container
+   {%if section.blocks.size > 1 %} js-slider{% endif %}"
+   data-autorotate="{{ section.settings.autorotate }}"
+   data-speed="{{ section.settings.autorotate_speed | times: 1000 }}">
+   <div class="swiper-wrapper">
+      {% for block in section.blocks %}
+      <div class="swiper-slide" style="height: {{ section.settings.height}}vh;">
+      {% if block.settings.image_mobile == blank or block.settings.image_tablet == blank or block.settings.image_desktop == blank %}
+            <div class="swiper-background"></div>
+      {% else %}
+            <picture>
+               <source media="(min-width: 1024px)" srcset="{{ block.settings.image_desktop | img_url: '3072x' }}">
+               <source media="(min-width: 768px)" srcset="{{ block.settings.image_tablet | img_url: '2048x' }}">
+               <img src="{{ block.settings.image_mobile | img_url: '1536x' }}" alt="{{ block.settings.image_mobile.alt }}">
+            </picture>
+      {% endif %}
+            {% if section.settings.show_overlay %}
+            <div class="overlay"
+               style="background-color: {{ section.settings.color_overlay }}; opacity: {{ section.settings.opacity_overlay }}%;">
+            </div>
+            {% endif %}
+            <div class="swiper__wrapper-content page-width 
+               {{ block.settings.content_alignment_mobile }}
+               {{ block.settings.content_alignment_tablet }}
+               {{ block.settings.content_alignment_desktop }}">
+               <div class="swiper__content
+                  {{ block.settings.text_alignment_mobile }}
+                  {{ block.settings.text_alignment_tablet }}
+                  {{ block.settings.text_alignment_desktop }}">
+                  {% if block.settings.slide_title != blank %}
+                  <h2 class="feature-row__heading" style="color: {{ block.settings.color_text }};">
+                     {{ block.settings.slide_title | escape }}
+                  </h2>
+                  {% endif %}
+                  {% if block.settings.slide_subtitle != blank %}
+                  <h3 class="feature-row__subtext" style="color: {{ block.settings.color_text }};">
+                     {{ block.settings.slide_subtitle | escape }}
+                  </h2>
+                  {% endif %}
+                  {% if block.settings.button_link and block.settings.button_label %}
+                  <a class="btn {{ block.settings.button_type }}" href="{{ block.settings.button_link }}">
+                     {{ block.settings.button_label }}
+                  </a>
+                  {% endif %}
+               </div>
+            </div>
+         </div>
+      {% endfor %}
+   </div>
+   {% if section.settings.navigation_type == "bullets" %}
+   <div class="swiper-pagination"></div>
+   {% else %}
+   <div class="swiper-button-prev"></div>
+   <div class="swiper-button-next"></div>
+   {% endif %}
+</div>
+
+{% javascript %}
+const slider = document.querySelector('.js-slider')
+
+if (slider) {
+   const loop = slider.getAttribute('data-autorotate') === 'true'
+   const delay = slider.getAttribute('data-speed')
+
+   const mySwiper = new Swiper('.js-slider', {
+      loop,
+      autoplay: {
+         delay,
+      },
+      pagination: {
+         el: '.swiper-pagination',
+         clickable: true
+      },
+      navigation: {
+         nextEl: '.swiper-button-next',
+         prevEl: '.swiper-button-prev',
+      },
+   })
+}
+{% endjavascript %}
+
+{% schema %}
+{
+  "name":"Slider Swiper",
+  "max_blocks":5,
+  "settings":[
+      {
+         "type": "range",
+         "id": "height",
+         "label": "Altura slider",
+         "unit": "%",
+         "min": 1,
+         "max": 100,
+         "step": 1,
+         "default": 70
+      },
+     {
+        "type": "header",
+        "content": "Navegación"
+     },
+     {
+        "type":"select",
+        "id":"navigation_type",
+        "label":"Tipo de navegación",
+        "options":[
+           {
+              "value":"bullets",
+              "label":"Bullets"
+           },
+           {
+              "value":"pagination",
+              "label":"Flechas"
+           }
+        ]
+     },
+     {
+         "type":"checkbox",
+         "id":"autorotate",
+         "label":"Rotar las diapositivas automáticamente",
+         "default":true
+      },
+      {
+         "type":"range",
+         "id":"autorotate_speed",
+         "label":"Cambiar diapositivas cada",
+         "max":9,
+         "min":3,
+         "step":2,
+         "unit":"seg",
+         "default":5
+      },
+     {
+       "type": "color",
+       "id": "color_animation",
+       "label": "Color para los elementos"
+     },
+     {
+        "type": "header",
+        "content": "Capa de color"
+     },
+      {
+         "type":"checkbox",
+         "id":"show_overlay",
+         "label":"Mostrar capa de color",
+         "default":false
+      },
+      {
+         "type":"color",
+         "id":"color_overlay",
+         "label":"Color de la capa"
+      },
+      {
+         "type":"range",
+         "id":"opacity_overlay",
+         "label":"Opacidad",
+         "min":0,
+         "max":100,
+         "step":1,
+         "unit":"%",
+         "default":40
+      }
+  ],
+  "blocks":[
+     {
+        "type":"image",
+        "name":"Diapositiva de imagen",
+        "settings":[
+            {
+               "type": "header",
+               "content": "Móvil"
+            },
+           {
+              "type":"image_picker",
+              "id":"image_mobile",
+              "label":"Imagen móvil"
+           },
+           {
+               "type":"select",
+               "id":"content_alignment_mobile",
+               "label":"Alineación del contenido",
+               "default":"justify-center items-center",
+               "options":[
+                  {
+                     "label":"Superior izquierda",
+                     "value":"justify-start items-start"
+                  },
+                  {
+                     "label":"Superior centrada",
+                     "value":"justify-center items-start"
+                  },
+                  {
+                     "label":"Superior derecha",
+                     "value":"justify-end items-start"
+                  },
+                  {
+                     "label":"Centrada a la izquierda",
+                     "value":"justify-start items-center"
+                  },
+                  {
+                     "label":"Centrada",
+                     "value":"justify-center items-center"
+                  },
+                  {
+                     "label":"Centrada a la derecha",
+                     "value":"justify-end items-center"
+                  },
+                  {
+                     "label":"Inferior izquierda",
+                     "value":"justify-start items-end"
+                  },
+                  {
+                     "label":"Inferior centrada",
+                     "value":"justify-center items-end"
+                  },
+                  {
+                     "label":"Inferior derecha",
+                     "value":"justify-end items-end"
+                  }
+               ]
+            },
+            {
+               "type":"select",
+               "id":"text_alignment_mobile",
+               "label":"Alineación del texto",
+               "default":"sm-text-center",
+               "options":[
+                  {
+                     "label":"Texto izquierda",
+                     "value":"sm-text-left"
+                  },
+                  {
+                     "label":"Texto centrado",
+                     "value":"sm-text-center"
+                  },
+                  {
+                     "label":"Texto derecha",
+                     "value":"sm-text-right"
+                  }
+               ]
+            },
+           {
+               "type": "header",
+               "content": "Tablet"
+            },
+           {
+              "type":"image_picker",
+              "id":"image_tablet",
+              "label":"Imagen tablet"
+           },
+           {
+               "type":"select",
+               "id":"content_alignment_tablet",
+               "label":"Alineación del contenido",
+               "default":"md-justify-center md-items-center",
+               "options":[
+                  {
+                     "label":"Superior izquierda",
+                     "value":"md-justify-start md-items-start"
+                  },
+                  {
+                     "label":"Superior centrada",
+                     "value":"md-justify-center md-items-start"
+                  },
+                  {
+                     "label":"Superior derecha",
+                     "value":"md-justify-end md-items-start"
+                  },
+                  {
+                     "label":"Centrada a la izquierda",
+                     "value":"md-justify-start md-items-center"
+                  },
+                  {
+                     "label":"Centrada",
+                     "value":"md-justify-center md-items-center"
+                  },
+                  {
+                     "label":"Centrada a la derecha",
+                     "value":"md-justify-end md-items-center"
+                  },
+                  {
+                     "label":"Inferior izquierda",
+                     "value":"md-justify-start md-items-end"
+                  },
+                  {
+                     "label":"Inferior centrada",
+                     "value":"md-justify-center md-items-end"
+                  },
+                  {
+                     "label":"Inferior derecha",
+                     "value":"md-justify-end md-items-end"
+                  }
+               ]
+            },
+            {
+               "type":"select",
+               "id":"text_alignment_tablet",
+               "label":"Alineación del texto",
+               "default":"md-text-center",
+               "options":[
+                  {
+                     "label":"Texto izquierda",
+                     "value":"md-text-left"
+                  },
+                  {
+                     "label":"Texto centrado",
+                     "value":"md-text-center"
+                  },
+                  {
+                     "label":"Texto derecha",
+                     "value":"md-text-right"
+                  }
+               ]
+            },
+           {
+               "type": "header",
+               "content": "Ordenador"
+            },
+           {
+              "type":"image_picker",
+              "id":"image_desktop",
+              "label":"Imagen ordenador"
+           },
+           {
+              "type":"select",
+              "id":"content_alignment_desktop",
+              "label":"Alineación del contenido",
+              "default":"lg-justify-center lg-items-center",
+              "options":[
+                 {
+                    "label":"Superior izquierda",
+                    "value":"lg-justify-start lg-items-start"
+                 },
+                 {
+                    "label":"Superior centrada",
+                    "value":"lg-justify-center lg-items-start"
+                 },
+                 {
+                    "label":"Superior derecha",
+                    "value":"lg-justify-end lg-items-start"
+                 },
+                 {
+                    "label":"Centrada a la izquierda",
+                    "value":"lg-justify-start lg-items-center"
+                 },
+                 {
+                    "label":"Centrada",
+                    "value":"lg-justify-center lg-items-center"
+                 },
+                 {
+                    "label":"Centrada a la derecha",
+                    "value":"lg-justify-end lg-items-center"
+                 },
+                 {
+                    "label":"Inferior izquierda",
+                    "value":"lg-justify-start lg-items-end"
+                 },
+                 {
+                    "label":"Inferior centrada",
+                    "value":"lg-justify-center lg-items-end"
+                 },
+                 {
+                    "label":"Inferior derecha",
+                    "value":"lg-justify-end lg-items-end"
+                 }
+              ]
+           },
+           {
+              "type":"select",
+              "id":"text_alignment_desktop",
+              "label":"Alineación del texto",
+              "default":"lg-text-center",
+              "options":[
+                 {
+                    "label":"Texto izquierda",
+                    "value":"lg-text-left"
+                 },
+                 {
+                    "label":"Texto centrado",
+                    "value":"lg-text-center"
+                 },
+                 {
+                    "label":"Texto derecha",
+                    "value":"lg-text-right"
+                 }
+              ]
+           },
+           {
+              "type": "header",
+              "content": "Configuración texto"
+           },
+           {
+              "type":"color",
+              "id":"color_text",
+              "label":"Color del texto",
+              "default":"#ffffff"
+           },
+           {
+              "type":"text",
+              "id":"slide_title",
+              "label":"Título"
+           },
+           {
+              "type":"text",
+              "id":"slide_subtitle",
+              "label":"Subtítulo"
+           },
+           {
+              "type":"select",
+              "id":"button_type",
+              "label":"Tipo de botón",
+              "default":"btn--primary",
+              "options":[
+                 {
+                    "label":"Botón primario",
+                    "value":"btn--primary"
+                 },
+                 {
+                    "label":"Botón secundario",
+                    "value":"btn--secondary"
+                 }
+              ]
+           },
+           {
+              "type":"text",
+              "id":"button_label",
+              "label":"Etiqueta de botón"
+           },
+           {
+              "type":"url",
+              "id":"button_link",
+              "label":"Enlace del botón"
+           }
+        ]
+     }
+  ],
+  "presets":[
+     {
+        "name":"Slider Swiper",
+        "category":"Imágenes",
+        "settings":{
+           "autorotate":true,
+           "autorotate_speed":5
+        },
+        "blocks":[
+           {
+              "type":"image"
+           },
+           {
+              "type":"image"
+           }
+        ]
+     }
+  ]
+}
+{% endschema %}
